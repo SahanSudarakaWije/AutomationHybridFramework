@@ -2,6 +2,8 @@ package selenium;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -65,5 +67,14 @@ public class SeleneseTestBase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public final String getCurrentDateAndTime() {
+		String curr_DateTime = "";
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
+		LocalDateTime now = LocalDateTime.now();
+		System.out.println(dtf.format(now));
+		curr_DateTime = dtf.format(now);
+		return curr_DateTime;
 	}
 }
