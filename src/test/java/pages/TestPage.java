@@ -1,7 +1,8 @@
 package pages;
 
 public enum TestPage {
-	tf_UserName("//input[@name='username']"), tf_PassWord("//input[@name='password']"), btn_Submit("//input[@name='submit']");
+	tf_UserName("//input[@name='username']"), tf_PassWord("//input[@name='password']"),
+	btn_Submit("//input[@name='submit']"), openURL("https://www.ebay.com/");
 
 	private String searchPath;
 
@@ -11,5 +12,5 @@ public enum TestPage {
 
 	public final String getSearchPath() {
 		return searchPath;
-	} 
+	}
 }
