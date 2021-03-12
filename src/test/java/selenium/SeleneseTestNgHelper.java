@@ -68,8 +68,13 @@ public class SeleneseTestNgHelper extends SeleneseTestBase {
 		driver = getBrowser(prefs.get("globalConfig", "executionEnv"), prefs.get("globalConfig", "executionBrowser"));
 		System.out.println(
 				"Executing Test Case : " + method.getDeclaringClass().getSimpleName() + "." + method.getName());
-		driver.get(DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url",
-				"http://ebay.com"));
+		if (!DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url", "")
+				.equals("")
+				|| DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url",
+						"") != null) {
+			driver.get(DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"),
+					"url", ""));
+		}
 		extendReporter.setExtendLogger(method.getDeclaringClass().getSimpleName() + "." + method.getName());
 		extendReporter.setLogInfo("Running test on URL : " + DataProviderFactory.getConfig()
 				.getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url", "http://ebay.com"));
@@ -84,11 +89,19 @@ public class SeleneseTestNgHelper extends SeleneseTestBase {
 	public final void tearDownSuite(ITestResult result) {
 		if (result.getStatus() == ITestResult.FAILURE) {
 			String path = captureScreenshot(driver, result.getName());
-			extendReporter.setFailScreenCapture(driver, path);
+			extendReporter.setFailScreenCapture(driver, path, result.getTestName() + " Failed.");
 		}
 		closeBrowser(driver);
 		extendReporter.endTestCreateReport();
 		extendReporter.flushReport();
+	}
+
+	public WebDriver getDriver() {
+		return driver;
+	}
+
+	public ExtendReporter getExtendReporter() {
+		return extendReporter;
 	}
 
 }

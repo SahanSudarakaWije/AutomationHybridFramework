@@ -44,8 +44,8 @@ public class ExtendReporter {
 		logger.log(LogStatus.INFO, logger.addScreenCapture(Helper.captureScreenshot(driver, ssName)));
 	}
 
-	public void setFailScreenCapture(WebDriver driver, String ssName) {
-		logger.log(LogStatus.FAIL, logger.addScreenCapture(Helper.captureScreenshot(driver, ssName)));
+	public void setFailScreenCapture(WebDriver driver, String ssName, String Message) {
+		logger.log(LogStatus.FAIL, logger.addScreenCapture(Helper.captureScreenshot(driver, ssName) + Message));
 	}
 
 	public void endTestCreateReport() {
