@@ -33,17 +33,17 @@ public class SeleneseTestNgHelper extends SeleneseTestBase {
 	ExtendReporter extendReporter = new ExtendReporter();
 
 	@BeforeTest
-	public final void setUp(final ITestContext context) throws InvalidFileFormatException, IOException {
+	public final void setUp(final ITestContext context) {
 		extendReporter.setExtendReport(getCurrentDateAndTime());
+	}
+
+	@BeforeSuite(alwaysRun = true)
+	public final void readOrInitiate() throws InvalidFileFormatException, IOException {
 		fname = new File(
 				System.getProperty("user.dir") + File.separator + "Configuration" + File.separator + "config.ini");
 		prefs = new Ini(fname);
 		System.out.println("Execution Browser : " + prefs.get("globalConfig", "executionBrowser"));
 		System.out.println("Execution Environment : " + prefs.get("globalConfig", "executionEnv"));
-	}
-
-	@BeforeSuite
-	public final void readOrInitiate() {
 		retryCount = Integer.parseInt(prefs.get("globalConfig", "retryCount"));
 		timeOutPeriod = Integer.parseInt(prefs.get("globalConfig", "timeOutPeriod"));
 		System.out.println("Retry Count : " + prefs.get("globalConfig", "retryCount"));
@@ -85,7 +85,7 @@ public class SeleneseTestNgHelper extends SeleneseTestBase {
 		closeBrowser(driver);
 	}
 
-	@AfterSuite
+	@AfterSuite(alwaysRun = true)
 	public final void tearDownSuite(ITestResult result) {
 		if (result.getStatus() == ITestResult.FAILURE) {
 			String path = captureScreenshot(driver, result.getName());

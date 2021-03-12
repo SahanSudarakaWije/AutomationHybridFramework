@@ -38,7 +38,7 @@ public class CommandFactory extends SeleneseTestNgHelper {
 	}
 
 	public final void open(final String objectName, final String identifier, final String waitTime) {
-		String url = ObjectMap.getResolvedSearchPath(objectName, identifier);
+		String url = ObjectMap.getObjectSearchPath(objectName, identifier);
 		ObjectLocator locator = new ObjectLocator(url, identifier, url);
 		doOpen(locator, waitTime);
 	}
