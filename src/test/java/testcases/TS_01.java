@@ -7,7 +7,7 @@ import libs.LIB_01;
 
 public class TS_01 extends CommandFactory {
 
-	@Test
+	@Test(alwaysRun = true)
 	public final void tc_01() {
 		LIB_01.openURL(this, "3000");
 	}

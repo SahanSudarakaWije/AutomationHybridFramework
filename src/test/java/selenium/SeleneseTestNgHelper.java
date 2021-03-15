@@ -11,10 +11,13 @@ import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
@@ -32,8 +35,8 @@ public class SeleneseTestNgHelper extends SeleneseTestBase {
 	Ini prefs;
 	ExtendReporter extendReporter = new ExtendReporter();
 
-	@BeforeTest
-	public final void setUp(final ITestContext context) {
+	@BeforeTest(alwaysRun = true)
+	public final void setUp() {
 		extendReporter.setExtendReport(getCurrentDateAndTime());
 	}
 
@@ -58,42 +61,55 @@ public class SeleneseTestNgHelper extends SeleneseTestBase {
 		return timeOutPeriod;
 	}
 
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	public final void getSelenium() {
 		System.out.println("before class executed successfully !");
 	}
 
-	@BeforeMethod
+	@BeforeMethod(alwaysRun = true)
 	public final void setTestContext(final Method method) {
 		driver = getBrowser(prefs.get("globalConfig", "executionEnv"), prefs.get("globalConfig", "executionBrowser"));
 		System.out.println(
 				"Executing Test Case : " + method.getDeclaringClass().getSimpleName() + "." + method.getName());
-		if (!DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url", "")
-				.equals("")
-				|| DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url",
-						"") != null) {
-			driver.get(DataProviderFactory.getConfig().getApplicationURL(prefs.get("globalConfig", "executionEnv"),
-					"url", ""));
-		}
 		extendReporter.setExtendLogger(method.getDeclaringClass().getSimpleName() + "." + method.getName());
-		extendReporter.setLogInfo("Running test on URL : " + DataProviderFactory.getConfig()
-				.getApplicationURL(prefs.get("globalConfig", "executionEnv"), "url", "http://ebay.com"));
-	}
+		if (!prefs.get(prefs.get("globalConfig", "executionEnv"), "url").equals("")) {
+			driver.get(prefs.get(prefs.get("globalConfig", "executionEnv"), "url"));
+			extendReporter
+					.setLogInfo("Running test on URL : " + prefs.get(prefs.get("globalConfig", "executionEnv"), "url"));
+		}
 
-	@AfterMethod
-	public final void closeDriver() {
-		closeBrowser(driver);
+	}
+	/*
+	 * @AfterMethod(alwaysRun = true) public final void closeDriver() {
+	 * closeBrowser(driver); }
+	 */
+
+	@AfterMethod(alwaysRun = true)
+	@Parameters({ "selenium.path", "selenium.browser" })
+	public final void tearDown(@Optional("test") String path, @Optional("chrome") final String browser,
+			ITestResult result) {
+		try {
+			if (result.getStatus() == ITestResult.FAILURE) {
+				path = captureScreenshot(driver, result.getName());
+				extendReporter.setFailScreenCapture(driver, path, result.getTestName() + " Failed.");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@AfterSuite(alwaysRun = true)
-	public final void tearDownSuite(ITestResult result) {
-		if (result.getStatus() == ITestResult.FAILURE) {
-			String path = captureScreenshot(driver, result.getName());
-			extendReporter.setFailScreenCapture(driver, path, result.getTestName() + " Failed.");
+	public final void tearDownSuite() {
+		try {
+			closeBrowser(driver);
+			extendReporter.endTestCreateReport();
+			extendReporter.flushReport();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		closeBrowser(driver);
-		extendReporter.endTestCreateReport();
-		extendReporter.flushReport();
+
 	}
 
 	public WebDriver getDriver() {

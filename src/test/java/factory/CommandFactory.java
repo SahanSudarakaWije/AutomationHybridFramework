@@ -52,20 +52,13 @@ public class CommandFactory extends SeleneseTestNgHelper {
 		} else {
 			try {
 				driver.get(url);
-				extendReporter.setLogPassMessage("WAIT : COMMAND PASSED. open " + url);
+				driver.manage().timeouts().implicitlyWait(Integer.parseInt(waitTime), TimeUnit.MILLISECONDS);
+				extendReporter.setLogPassMessage("OPEN : COMMAND PASSED. open " + url);
 			} catch (Exception e) {
 				extendReporter.setFailScreenCapture(driver, getCurrentDateAndTime(),
 						"OPEN : COMMAND FAILED. " + e.toString());
 			}
 
-		}
-
-		try {
-			driver.manage().timeouts().implicitlyWait(Integer.parseInt(waitTime), TimeUnit.MILLISECONDS);
-			extendReporter.setLogPassMessage("WAIT : COMMAND PASSED. wait " + waitTime + " milliseconds.");
-		} catch (Exception e) {
-			extendReporter.setFailScreenCapture(driver, getCurrentDateAndTime(),
-					"OPEN : COMMAND FAILED. invalid arguments passed for the wait time");
 		}
 
 	}
